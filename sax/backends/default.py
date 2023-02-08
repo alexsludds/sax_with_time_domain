@@ -42,9 +42,14 @@ def evaluate_circuit(
 
     block_diag = {}
     for name, S in instances.items():
-        block_diag.update(
-            {(f"{name},{p1}", f"{name},{p2}"): v for (p1, p2), v in sdict(S).items()}
-        )
+        if type(S) == dict: 
+            block_diag.update(
+                {(f"{name},{p1}", f"{name},{p2}"): v for (p1, p2), v in sdict(S).items()}
+            )
+        elif hasattr(S, '__call__'): #Check if this is a function
+            block_diag.update(
+                {(f"{name},{p1}", f"{name},{p2}"): v for (p1, p2), v in sdict(S()).items()}
+            )
 
     sorted_connections = sorted(connections.items(), key=_connections_sort_key)
     all_connected_instances = {k: {k} for k in instances}
